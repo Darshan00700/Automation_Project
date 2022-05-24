@@ -24,6 +24,24 @@ tar -cf /tmp/${name}-httpd-logs-${timestamp}.tar /var/log/apache2/*.log
 
 aws s3 cp /tmp/${name}-httpd-logs-${timestamp}.tar s3://${s3_bucket}/${name}-httpd-logs-${timestamp}.tar
 
+if  [ ! -f /var/www/html/inventory.html ]
+then
+echo -e "Log Type\tDate Created\tType\tSize" > /var/www/html/inventory.html
+fi
+
+
+if  [ -f /var/www/html/inventory.html ]
+then
+echo -e "httpd-logs\t$timestamp\ttar\t$( du -h /tmp/${name}-httpd-logs-${timestamp}.tar | awk '{print $1}' )" >> /var/www/html/inventory.html
+fi
+
+if [ ! -f /etc/cron.d/automation ]
+then
+echo "* * * * * root /root/Automation_Project/automation.sh" > /etc/cron.d/automation
+fi
+
+
+
 
 
 
